@@ -6,10 +6,10 @@ from create_annotations import *
 
 
 # provide the path to the dataset. There should be train, train_mask, test, test_mask under this folder
-targetpath = 'YOUR_DATASET_NAME'
+targetpath = '/kaggle/input/newr-1/Test_Dataset_NewResearch'
 
 
-image_size = 1024
+image_size = 640
 
 
 ### Load Biomed Label Base
