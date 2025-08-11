@@ -1,7 +1,7 @@
 import glob
 from tqdm import tqdm
 import pandas as pd
-
+import os
 from create_annotations import *
 
 
@@ -141,7 +141,15 @@ if __name__ == "__main__":
             if im["file_name"] not in images_with_ann:
                 coco_format['images'].remove(im)
 
-        with open(os.path.join(targetpath, "{}.json".format(keyword)),"w") as outfile:
+        # with open(os.path.join(targetpath, "{}.json".format(keyword)),"w") as outfile:
+        #     json.dump(coco_format, outfile)
+        
+        output_dir = "/kaggle/working/biomedparse_output"
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Write the JSON file there instead of targetpath
+        output_file = os.path.join(output_dir, f"{keyword}.json")
+        with open(output_file, "w") as outfile:
             json.dump(coco_format, outfile)
         
         print("Created %d annotations for %d images in folder: %s" % (annotation_cnt, len(coco_format['images']), mask_path))
