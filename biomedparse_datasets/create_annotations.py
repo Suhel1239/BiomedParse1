@@ -28,36 +28,36 @@ def create_sub_masks(mask_image, width, height):
 
     return sub_masks
 
-# def create_sub_mask_annotation(sub_mask):
-#     # Find contours (boundary lines) around each sub-mask
-#     # Note: there could be multiple contours if the object
-#     # is partially occluded. (E.g. an elephant behind a tree)
-#     contours = measure.find_contours(np.array(sub_mask), 0.5, positive_orientation="low")
+def create_sub_mask_annotation(sub_mask):
+    # Find contours (boundary lines) around each sub-mask
+    # Note: there could be multiple contours if the object
+    # is partially occluded. (E.g. an elephant behind a tree)
+    contours = measure.find_contours(np.array(sub_mask), 0.5, positive_orientation="low")
 
-#     polygons = []
-#     segmentations = []
-#     for contour in contours:
-#         # Flip from (row, col) representation to (x, y)
-#         # and subtract the padding pixel
-#         for i in range(len(contour)):
-#             row, col = contour[i]
-#             contour[i] = (col - 1, row - 1)
+    polygons = []
+    segmentations = []
+    for contour in contours:
+        # Flip from (row, col) representation to (x, y)
+        # and subtract the padding pixel
+        for i in range(len(contour)):
+            row, col = contour[i]
+            contour[i] = (col - 1, row - 1)
 
-#         # Make a polygon and simplify it
-#         poly = Polygon(contour)
-#         if poly.length > 100:
-#             poly = poly.simplify(0.5, preserve_topology=True)
+        # Make a polygon and simplify it
+        poly = Polygon(contour)
+        if poly.length > 100:
+            poly = poly.simplify(0.5, preserve_topology=True)
         
-#         if(poly.is_empty):
-#             # Go to next iteration, dont save empty values in list
-#             continue
+        if(poly.is_empty):
+            # Go to next iteration, dont save empty values in list
+            continue
 
-#         polygons.append(poly)
+        polygons.append(poly)
 
-#         segmentation = np.array(poly.exterior.coords).ravel().tolist()
-#         segmentations.append(segmentation)
+        segmentation = np.array(poly.exterior.coords).ravel().tolist()
+        segmentations.append(segmentation)
     
-#     return polygons, segmentations
+    return polygons, segmentations
 
 def create_category_annotation(category_dict):
     category_list = []
