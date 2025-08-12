@@ -1,158 +1,298 @@
+# import glob
+# from tqdm import tqdm
+# import pandas as pd
+# import os
+# from create_annotations import *
+
+
+# # provide the path to the dataset. There should be train, train_mask, test, test_mask under this folder
+# targetpath = '/kaggle/working/data'
+
+
+# image_size = 640
+
+
+# ### Load Biomed Label Base
+# # provide path to predefined label base
+# with open('label_base1.json', 'r') as f:
+#     label_base = json.load(f)
+    
+    
+    
+# # get parent class for the names
+# parent_class = {}
+# for i in label_base:
+#     subnames = [label_base[i]['name']] + label_base[i].get('child', [])
+#     for label in subnames:
+#         parent_class[label] = int(i)
+    
+# # Label ids of the dataset
+# category_ids = {label_base[i]['name']: int(i) for i in label_base if 'name' in label_base[i]}
+
+
+
+# # Get "images" and "annotations" info 
+# def images_annotations_info(maskpath):
+    
+#     imagepath = maskpath.replace('_mask', '')
+#     # This id will be automatically increased as we go
+#     annotation_id = 0
+    
+#     sent_id = 0
+#     ref_id = 0
+    
+#     annotations = []
+#     images = []
+#     image_to_id = {}
+#     n_total = len(glob.glob(maskpath + "*.png"))
+#     n_errors = 0
+    
+#     def extra_annotation(ann, file_name, target):
+#         nonlocal sent_id, ref_id
+#         ann['file_name'] = file_name
+#         ann['split'] = keyword
+        
+#         ### modality
+#         mod = file_name.split('.')[0].split('_')[-2]
+#         ### site
+#         site = file_name.split('.')[0].split('_')[-1]
+        
+#         task = {'target': target, 'modality': mod, 'site': site}
+#         if 'T1' in mod or 'T2' in mod or 'FLAIR' in mod or 'ADC' in mod:
+#             task['modality'] = 'MRI'
+#             if 'MRI' not in mod:
+#                 task['sequence'] = mod
+#             else:
+#                 task['sequence'] = mod[4:]
+            
+#         prompts = [f'{target} in {site} {mod}']
+        
+#         ann['sentences'] = []
+#         for p in prompts:
+#             ann['sentences'].append({'raw': p, 'sent': p, 'sent_id': sent_id})
+#             sent_id += 1
+#         ann['sent_ids'] = [s['sent_id'] for s in ann['sentences']]
+        
+#         ann['ann_id'] = ann['id']
+#         ann['ref_id'] = ref_id
+#         ref_id += 1
+        
+#         return ann
+    
+#     for mask_image in tqdm(glob.glob(maskpath + "*.png")):
+#         # The mask image is *.png but the original image is *.jpg.
+#         # We make a reference to the original file in the COCO JSON file
+#         filename_parsed = os.path.basename(mask_image).split("_")
+#         target_name = filename_parsed[-1].split(".")[0].replace("+", " ")
+        
+#         original_file_name = "_".join(filename_parsed[:-1]) + ".png"
+        
+#         if original_file_name not in os.listdir(imagepath):
+#             print("Original file not found: {}".format(original_file_name))
+#             n_errors += 1
+#             continue
+        
+#         if original_file_name not in image_to_id:
+#             image_to_id[original_file_name] = len(image_to_id)
+
+#             # "images" info 
+#             image_id = image_to_id[original_file_name]
+#             image = create_image_annotation(original_file_name, image_size, image_size, image_id)
+#             images.append(image)
+            
+        
+#         annotation = {
+#             "mask_file": os.path.basename(mask_image),
+#             "iscrowd": 0,
+#             "image_id": image_to_id[original_file_name],
+#             "category_id": parent_class[target_name],
+#             "id": annotation_id,
+#         }
+
+#         annotation = extra_annotation(annotation, original_file_name, target_name)
+                
+#         annotations.append(annotation)
+#         annotation_id += 1
+            
+#     #print(f"Number of errors in conversion: {n_errors}/{n_total}")
+#     return images, annotations, annotation_id
+
+
+
+
+# if __name__ == "__main__":
+#     # Get the standard COCO JSON format
+#     coco_format = get_coco_json_format()
+
+#     for keyword in ['train', 'test']:
+#         mask_path = os.path.join(targetpath, "{}_mask/".format(keyword))
+        
+#         # Create category section
+#         coco_format["categories"] = create_category_annotation(category_ids)
+    
+#         # Create images and annotations sections
+#         coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(mask_path)
+
+#         # post-process file
+#         images_with_ann = set()
+#         for ann in coco_format['annotations']:
+#             images_with_ann.add(ann['file_name'])
+#         for im in coco_format['images']:
+#             if im["file_name"] not in images_with_ann:
+#                 coco_format['images'].remove(im)
+
+#         # with open(os.path.join(targetpath, "{}.json".format(keyword)),"w") as outfile:
+#         #     json.dump(coco_format, outfile)
+        
+#         output_dir = "/kaggle/working/data"
+#         os.makedirs(output_dir, exist_ok=True)
+        
+#         # Write the JSON file there instead of targetpath
+#         output_file = os.path.join(output_dir, f"{keyword}.json")
+#         with open(output_file, "w") as outfile:
+#             json.dump(coco_format, outfile)
+        
+#         print("Created %d annotations for %d images in folder: %s" % (annotation_cnt, len(coco_format['images']), mask_path))
+
+# #################################################
+
 import glob
 from tqdm import tqdm
 import pandas as pd
 import os
+import json
+import numpy as np
+from PIL import Image
 from create_annotations import *
 
 
-# provide the path to the dataset. There should be train, train_mask, test, test_mask under this folder
+# Path to dataset
 targetpath = '/kaggle/working/data'
-
-
 image_size = 640
 
-
-### Load Biomed Label Base
-# provide path to predefined label base
+# Load Biomed Label Base
 with open('label_base1.json', 'r') as f:
     label_base = json.load(f)
-    
-    
-    
-# get parent class for the names
+
+# Parent class mapping
 parent_class = {}
 for i in label_base:
     subnames = [label_base[i]['name']] + label_base[i].get('child', [])
     for label in subnames:
         parent_class[label] = int(i)
-    
-# Label ids of the dataset
+
+# Category IDs
 category_ids = {label_base[i]['name']: int(i) for i in label_base if 'name' in label_base[i]}
 
 
+def get_bbox_and_area(mask_path):
+    """Calculate bbox and area from a binary mask."""
+    mask = np.array(Image.open(mask_path).convert("L"))
+    ys, xs = np.where(mask > 0)
+    if len(xs) == 0 or len(ys) == 0:
+        return [0, 0, 0, 0], 0
 
-# Get "images" and "annotations" info 
+    x_min, x_max = xs.min(), xs.max()
+    y_min, y_max = ys.min(), ys.max()
+    bbox = [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)]
+    area = int(np.sum(mask > 0))
+    return bbox, area
+
+
+# Create images and annotations
 def images_annotations_info(maskpath):
-    
     imagepath = maskpath.replace('_mask', '')
-    # This id will be automatically increased as we go
     annotation_id = 0
-    
     sent_id = 0
     ref_id = 0
-    
+
     annotations = []
     images = []
     image_to_id = {}
-    n_total = len(glob.glob(maskpath + "*.png"))
     n_errors = 0
-    
+
     def extra_annotation(ann, file_name, target):
         nonlocal sent_id, ref_id
         ann['file_name'] = file_name
         ann['split'] = keyword
-        
-        ### modality
+
+        # modality & site
         mod = file_name.split('.')[0].split('_')[-2]
-        ### site
         site = file_name.split('.')[0].split('_')[-1]
-        
         task = {'target': target, 'modality': mod, 'site': site}
-        if 'T1' in mod or 'T2' in mod or 'FLAIR' in mod or 'ADC' in mod:
+        if any(s in mod for s in ['T1', 'T2', 'FLAIR', 'ADC']):
             task['modality'] = 'MRI'
             if 'MRI' not in mod:
                 task['sequence'] = mod
             else:
                 task['sequence'] = mod[4:]
-            
+
+        # prompts
         prompts = [f'{target} in {site} {mod}']
-        
         ann['sentences'] = []
         for p in prompts:
             ann['sentences'].append({'raw': p, 'sent': p, 'sent_id': sent_id})
             sent_id += 1
         ann['sent_ids'] = [s['sent_id'] for s in ann['sentences']]
-        
+
         ann['ann_id'] = ann['id']
         ann['ref_id'] = ref_id
         ref_id += 1
-        
+
         return ann
-    
+
     for mask_image in tqdm(glob.glob(maskpath + "*.png")):
-        # The mask image is *.png but the original image is *.jpg.
-        # We make a reference to the original file in the COCO JSON file
         filename_parsed = os.path.basename(mask_image).split("_")
         target_name = filename_parsed[-1].split(".")[0].replace("+", " ")
-        
         original_file_name = "_".join(filename_parsed[:-1]) + ".png"
-        
+
         if original_file_name not in os.listdir(imagepath):
-            print("Original file not found: {}".format(original_file_name))
+            print(f"Original file not found: {original_file_name}")
             n_errors += 1
             continue
-        
+
         if original_file_name not in image_to_id:
             image_to_id[original_file_name] = len(image_to_id)
-
-            # "images" info 
             image_id = image_to_id[original_file_name]
             image = create_image_annotation(original_file_name, image_size, image_size, image_id)
             images.append(image)
-            
-        
+
+        bbox, area = get_bbox_and_area(mask_image)
+
         annotation = {
             "mask_file": os.path.basename(mask_image),
+            "area": area,
             "iscrowd": 0,
             "image_id": image_to_id[original_file_name],
+            "bbox": bbox,
             "category_id": parent_class[target_name],
             "id": annotation_id,
         }
 
         annotation = extra_annotation(annotation, original_file_name, target_name)
-                
         annotations.append(annotation)
         annotation_id += 1
-            
-    #print(f"Number of errors in conversion: {n_errors}/{n_total}")
+
     return images, annotations, annotation_id
 
 
-
-
 if __name__ == "__main__":
-    # Get the standard COCO JSON format
     coco_format = get_coco_json_format()
 
     for keyword in ['train', 'test']:
-        mask_path = os.path.join(targetpath, "{}_mask/".format(keyword))
-        
-        # Create category section
+        mask_path = os.path.join(targetpath, f"{keyword}_mask/")
+
         coco_format["categories"] = create_category_annotation(category_ids)
-    
-        # Create images and annotations sections
         coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(mask_path)
 
-        # post-process file
-        images_with_ann = set()
-        for ann in coco_format['annotations']:
-            images_with_ann.add(ann['file_name'])
-        for im in coco_format['images']:
-            if im["file_name"] not in images_with_ann:
-                coco_format['images'].remove(im)
+        # Remove images with no annotations
+        images_with_ann = {ann['file_name'] for ann in coco_format['annotations']}
+        coco_format['images'] = [im for im in coco_format['images'] if im["file_name"] in images_with_ann]
 
-        # with open(os.path.join(targetpath, "{}.json".format(keyword)),"w") as outfile:
-        #     json.dump(coco_format, outfile)
-        
         output_dir = "/kaggle/working/data"
         os.makedirs(output_dir, exist_ok=True)
-        
-        # Write the JSON file there instead of targetpath
         output_file = os.path.join(output_dir, f"{keyword}.json")
         with open(output_file, "w") as outfile:
             json.dump(coco_format, outfile)
-        
-        print("Created %d annotations for %d images in folder: %s" % (annotation_cnt, len(coco_format['images']), mask_path))
 
-#################################################
-
+        print(f"Created {annotation_cnt} annotations for {len(coco_format['images'])} images in folder: {mask_path}")
