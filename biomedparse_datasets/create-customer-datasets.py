@@ -6,7 +6,7 @@ from create_annotations import *
 
 
 # provide the path to the dataset. There should be train, train_mask, test, test_mask under this folder
-targetpath = '/kaggle/input/newr-1/Test_Dataset_NewResearch'
+targetpath = '/kaggle/working/data'
 
 
 image_size = 640
@@ -144,7 +144,7 @@ if __name__ == "__main__":
         # with open(os.path.join(targetpath, "{}.json".format(keyword)),"w") as outfile:
         #     json.dump(coco_format, outfile)
         
-        output_dir = "/kaggle/working/biomedparse_output"
+        output_dir = "/kaggle/working/data"
         os.makedirs(output_dir, exist_ok=True)
         
         # Write the JSON file there instead of targetpath
