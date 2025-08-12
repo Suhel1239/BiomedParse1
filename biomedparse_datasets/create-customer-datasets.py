@@ -14,7 +14,7 @@ image_size = 640
 
 ### Load Biomed Label Base
 # provide path to predefined label base
-with open('label_base.json', 'r') as f:
+with open('label_base1.json', 'r') as f:
     label_base = json.load(f)
     
     
