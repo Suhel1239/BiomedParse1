@@ -217,6 +217,7 @@
     "name": "yuji",
     "parent" : "yuji",
     "child" : [
+      "yuji cough thumb lung",
       "base of the thumb",
       "relieve sore throat",
       "cough",
@@ -228,6 +229,7 @@
     "name": "laogong",
     "parent" : "laogong",
     "child" : [
+      "laogong anxiety palm pericardium",
       "tip of the middle finger naturally touches the palm",
       "second and third metacarpal bones",
       "relieve stress", 
@@ -242,6 +244,7 @@
     "name": "zhongchong",
     "parent" : "zhongchong",
     "child" : [
+      "zhongchong consciousness middlefinger pericardium",
       "tip of the middle finger",
       "clear heat", 
       "revive consciousness",
@@ -256,6 +259,7 @@
     "name": "shaofu",
     "parent" : "shaofu",
     "child" : [
+      "shaofu palpitations palm heart",
       "tip of the little finger naturally touches the palm",
       "fourth and fifth metacarpal bones",
       "emotional stress", 
