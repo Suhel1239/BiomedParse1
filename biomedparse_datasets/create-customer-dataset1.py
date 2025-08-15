@@ -54,6 +54,18 @@ lesion_descriptions_en = {
     }
 }
 
+def get_bbox_and_area(mask_path):
+    """Calculate bbox and area from a binary mask."""
+    mask = np.array(Image.open(mask_path).convert("L"))
+    ys, xs = np.where(mask > 0)
+    if len(xs) == 0 or len(ys) == 0:
+        return [0, 0, 0, 0], 0
+
+    x_min, x_max = xs.min(), xs.max()
+    y_min, y_max = ys.min(), ys.max()
+    bbox = [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)]
+    area = int(np.sum(mask > 0))
+    return bbox, area
 
 def generate_description(lesion, site, mod):
     description_list = []
@@ -96,7 +108,7 @@ def images_annotations_info(maskpath):
         nonlocal sent_id, ref_id
         ann['file_name'] = file_name
         ann['split'] = keyword
-        
+        bbox, area = get_bbox_and_area(mask_path)
         ### modality
         mod = file_name.split('.')[0].split('_')[-2]
         ### site
