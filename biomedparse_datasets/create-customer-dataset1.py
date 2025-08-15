@@ -91,78 +91,45 @@ def images_annotations_info(maskpath):
     image_to_id = {}
     n_total = len(glob.glob(maskpath + "*.png"))
     n_errors = 0
-
+    
     def extra_annotation(ann, file_name, target):
         nonlocal sent_id, ref_id
-        
-        # Preserve COCO-required keys
-        bbox = ann.get("bbox", None)
-        area = ann.get("area", None)
-    
         ann['file_name'] = file_name
         ann['split'] = keyword
-    
+        
+        ### modality
         mod = file_name.split('.')[0].split('_')[-2]
+        ### site
         site = file_name.split('.')[0].split('_')[-1]
+        
         task = {'target': target, 'modality': mod, 'site': site}
-        if any(s in mod for s in ['T1', 'T2', 'FLAIR', 'ADC']):
+        if 'T1' in mod or 'T2' in mod or 'FLAIR' in mod or 'ADC' in mod:
             task['modality'] = 'MRI'
             if 'MRI' not in mod:
                 task['sequence'] = mod
             else:
                 task['sequence'] = mod[4:]
-    
-        prompts = [f'{target} in {site} {mod}']
+            
+        # prompts = [f'{target} in {site} {mod}']  # 这里要改一下，希望句子能够描述病灶特点，并且能够随机生成描述语句。
+        prompts = generate_description(target, site, mod)
+
         ann['sentences'] = []
         for p in prompts:
             ann['sentences'].append({'raw': p, 'sent': p, 'sent_id': sent_id})
             sent_id += 1
         ann['sent_ids'] = [s['sent_id'] for s in ann['sentences']]
-    
+        
         ann['ann_id'] = ann['id']
         ann['ref_id'] = ref_id
         ref_id += 1
-    
+
         # Restore COCO-required keys
         if bbox is not None:
             ann["bbox"] = bbox
         if area is not None:
             ann["area"] = area
-    
+        
         return ann
-    
-    # def extra_annotation(ann, file_name, target):
-    #     nonlocal sent_id, ref_id
-    #     ann['file_name'] = file_name
-    #     ann['split'] = keyword
-        
-    #     ### modality
-    #     mod = file_name.split('.')[0].split('_')[-2]
-    #     ### site
-    #     site = file_name.split('.')[0].split('_')[-1]
-        
-    #     task = {'target': target, 'modality': mod, 'site': site}
-    #     if 'T1' in mod or 'T2' in mod or 'FLAIR' in mod or 'ADC' in mod:
-    #         task['modality'] = 'MRI'
-    #         if 'MRI' not in mod:
-    #             task['sequence'] = mod
-    #         else:
-    #             task['sequence'] = mod[4:]
-            
-    #     # prompts = [f'{target} in {site} {mod}']  # 这里要改一下，希望句子能够描述病灶特点，并且能够随机生成描述语句。
-    #     prompts = generate_description(target, site, mod)
-
-    #     ann['sentences'] = []
-    #     for p in prompts:
-    #         ann['sentences'].append({'raw': p, 'sent': p, 'sent_id': sent_id})
-    #         sent_id += 1
-    #     ann['sent_ids'] = [s['sent_id'] for s in ann['sentences']]
-        
-    #     ann['ann_id'] = ann['id']
-    #     ann['ref_id'] = ref_id
-    #     ref_id += 1
-        
-    #     return ann
     
     for mask_image in tqdm(glob.glob(maskpath + "*.png")):
         # The mask image is *.png but the original image is *.jpg.
