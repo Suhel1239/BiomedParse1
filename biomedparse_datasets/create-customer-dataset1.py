@@ -3,7 +3,7 @@ from tqdm import tqdm
 import pandas as pd
 import random
 
-from Biomed_Copy.biomedparse_datasets.create_annotations import *
+from create_annotations import *
 
 
 # provide the path to the dataset. There should be train, demo_mask, test, test_mask under this folder
@@ -32,25 +32,25 @@ category_ids = {label_base[i]['name']: int(i) for i in label_base if 'name' in l
 
 # 词库定义
 lesion_descriptions_en = {
-    'microaneurysm': {
-        'names': ['microaneurysm', 'capillary aneurysm'],
-        'appearance': ['small and round', 'red dot-like', 'well-defined edges'],
-        'location': ['near the macular area', 'scattered around the central retina', 'mainly located in the posterior pole']
+    'yuji': {
+        'names': ['yuji', 'LU10'],
+        'function': ['highly effective in clearing heat from the lungs and throat', 'relieve sore throat', 'cough', 'asthma', 'fever'],
+        'location': ['base of the thumb', 'located on the palm side of the hand', 'midpoint of the first metacarpal bone', 'Lung Meridian']
     },
-    'hard exudate': {
-        'names': ['hard exudate', 'hard lesion'],
-        'appearance': ['yellow patches', 'star-shaped distribution', 'clear boundaries'],
-        'location': ['near the lesion area', 'commonly found near the macula']
+    'laogong': {
+        'names': ['laogong', 'P8'],
+        'function': ['clearing heat from the heart', 'calming the mind', 'revitalizing energy flow', 'stress', 'anxiety', 'insomnia', 'heart palpitations', 'excessive sweating', 'digestive discomfort'],
+        'location': ['located on the palm of the hand', 'Pericardium Meridian', 'where the tip of the middle finger naturally touches the palm','second and third metacarpal bones']
     },
-    'hemorrhage': {
-        'names': ['hemorrhage', 'dot hemorrhage'],
-        'appearance': ['dark red spots', 'coalesced into larger patches', 'irregular shapes'],
-        'location': ['distributed along blood vessels', 'scattered in various retinal areas']
+    'zhongchong': {
+        'names': ['zhongchong', 'P9'],
+        'function': ['clear heat', 'revive consciousness', 'regulate heart energy', 'stroke', 'fainting', 'high fever', 'heatstroke', 'loss of consciousness', 'heart palpitations'],
+        'location': ['tip of the middle finger', 'Pericardium Meridian']
     },
-    'soft exudate': {
-        'names': ['soft exudate', 'cotton-wool spot'],
-        'appearance': ['white patches', 'blurred edges', 'soft texture'],
-        'location': ['around the optic disc', 'peripheral macular area']
+    'shaofu': {
+        'names': ['shaofu', 'HT8'],
+        'function': ['clearing heat from the Heart', 'calming mind', 'emotional stress', 'anxiety', 'heart palpitations', 'excessive sweating', 'mouth ulcers'],
+        'location': ['palm of the hand', 'Heart Meridian', 'lies where the tip of the little finger naturally touches the palm', 'fourth and fifth metacarpal bones']
     }
 }
 
@@ -60,16 +60,16 @@ def generate_description(lesion, site, mod):
 
     desc = lesion_descriptions_en[lesion]
     name = random.choice(desc['names'])
-    appearance = random.choice(desc['appearance'])
+    function = random.choice(desc['function'])
     location = random.choice(desc['location'])
 
     # 随机选择生成 1 到 3 句描述
     num_sentences = random.randint(1, 3)
     for _ in range(num_sentences):
         template = random.choice([
-        f"{name} is observed, characterized by {appearance}, located at {location}.",
-        f"{name} appears in the image, presenting as {appearance}, mainly distributed around {location}.",
-        f"{name} can be seen in the image, usually appearing as {appearance}, commonly found at {location}.",
+        f"{name} is observed, used for {function}, located at {location}.",
+        f"{name} appears in the image, used for {function}, mainly distributed around {location}.",
+        f"{name} can be seen in the image, usually used for {function}, commonly found at {location}.",
     ])
         description_list.append(template)
 
