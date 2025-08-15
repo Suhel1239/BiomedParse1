@@ -211,12 +211,46 @@ def images_annotations_info(maskpath):
     image_to_id = {}
     n_errors = 0
 
+    # def extra_annotation(ann, file_name, target):
+    #     nonlocal sent_id, ref_id
+    #     ann['file_name'] = file_name
+    #     ann['split'] = keyword
+
+    #     # modality & site
+    #     mod = file_name.split('.')[0].split('_')[-2]
+    #     site = file_name.split('.')[0].split('_')[-1]
+    #     task = {'target': target, 'modality': mod, 'site': site}
+    #     if any(s in mod for s in ['T1', 'T2', 'FLAIR', 'ADC']):
+    #         task['modality'] = 'MRI'
+    #         if 'MRI' not in mod:
+    #             task['sequence'] = mod
+    #         else:
+    #             task['sequence'] = mod[4:]
+
+    #     # prompts
+    #     prompts = [f'{target} in {site} {mod}']
+    #     ann['sentences'] = []
+    #     for p in prompts:
+    #         ann['sentences'].append({'raw': p, 'sent': p, 'sent_id': sent_id})
+    #         sent_id += 1
+    #     ann['sent_ids'] = [s['sent_id'] for s in ann['sentences']]
+
+    #     ann['ann_id'] = ann['id']
+    #     ann['ref_id'] = ref_id
+    #     ref_id += 1
+
+    #     return ann
+
     def extra_annotation(ann, file_name, target):
         nonlocal sent_id, ref_id
+        
+        # Preserve COCO-required keys
+        bbox = ann.get("bbox", None)
+        area = ann.get("area", None)
+    
         ann['file_name'] = file_name
         ann['split'] = keyword
-
-        # modality & site
+    
         mod = file_name.split('.')[0].split('_')[-2]
         site = file_name.split('.')[0].split('_')[-1]
         task = {'target': target, 'modality': mod, 'site': site}
@@ -226,20 +260,26 @@ def images_annotations_info(maskpath):
                 task['sequence'] = mod
             else:
                 task['sequence'] = mod[4:]
-
-        # prompts
+    
         prompts = [f'{target} in {site} {mod}']
         ann['sentences'] = []
         for p in prompts:
             ann['sentences'].append({'raw': p, 'sent': p, 'sent_id': sent_id})
             sent_id += 1
         ann['sent_ids'] = [s['sent_id'] for s in ann['sentences']]
-
+    
         ann['ann_id'] = ann['id']
         ann['ref_id'] = ref_id
         ref_id += 1
-
+    
+        # Restore COCO-required keys
+        if bbox is not None:
+            ann["bbox"] = bbox
+        if area is not None:
+            ann["area"] = area
+    
         return ann
+
 
     for mask_image in tqdm(glob.glob(maskpath + "*.png")):
         filename_parsed = os.path.basename(mask_image).split("_")
