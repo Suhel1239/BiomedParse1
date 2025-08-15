@@ -108,7 +108,7 @@ def images_annotations_info(maskpath):
         nonlocal sent_id, ref_id
         ann['file_name'] = file_name
         ann['split'] = keyword
-        bbox, area = get_bbox_and_area(os.path.join(maskpath, ann['mask_file'])
+        bbox, area = get_bbox_and_area(os.path.join(maskpath, ann['mask_file']))
         ### modality
         mod = file_name.split('.')[0].split('_')[-2]
         ### site
