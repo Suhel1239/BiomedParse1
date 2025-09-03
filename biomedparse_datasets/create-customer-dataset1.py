@@ -63,7 +63,7 @@ def get_bbox_and_area(mask_path):
 
     x_min, x_max = xs.min(), xs.max()
     y_min, y_max = ys.min(), ys.max()
-    bbox = [int(x_min), int(y_min), int(x_max), int(y_max)]
+    bbox = [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)]
     area = int(np.sum(mask > 0))
     return bbox, area
 
