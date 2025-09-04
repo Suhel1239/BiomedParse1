@@ -76,7 +76,7 @@ def generate_description(lesion, site, mod):
     location = random.choice(desc['location'])
 
     # 随机选择生成 1 到 3 句描述
-    num_sentences = random.randint(1, 3)
+    num_sentences = random.randint(1, 1)
     for _ in range(num_sentences):
         template = random.choice([
         f"{name} is observed, used for {function}, located at {location}.",
