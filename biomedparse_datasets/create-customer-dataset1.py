@@ -123,7 +123,8 @@ def images_annotations_info(maskpath):
                 task['sequence'] = mod[4:]
             
         # prompts = [f'{target} in {site} {mod}']  # 这里要改一下，希望句子能够描述病灶特点，并且能够随机生成描述语句。
-        prompts = generate_description(target, site, mod)
+        gen_prompts = generate_description(target, site, mod)
+        prompts = random.choice(gen_prompts)
 
         ann['sentences'] = []
         for p in prompts:
