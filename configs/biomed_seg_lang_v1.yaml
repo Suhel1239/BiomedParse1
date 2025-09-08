@@ -231,13 +231,13 @@ ATTENTION_ARCH:
 
 DATASETS:
   TRAIN: [
-  'biomed_/kaggle/input/biomed-data_train'    # Add your registered training datasets here
+  'biomed__kaggle_input_biomed-data_train'    # Add your registered training datasets here
   ]
 
 
 
   TEST:  [
-  'biomed_/kaggle/input/biomed-data_test'   # Add your registered test datasets here
+  'biomed__kaggle_input_biomed-data_test'   # Add your registered test datasets here
   ]
   
   CLASS_CONCAT: false
