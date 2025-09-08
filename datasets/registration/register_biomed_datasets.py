@@ -29,18 +29,18 @@ for name in datasets:
         _PREDEFINED_SPLITS_BIOMED[dataname] = (image_root, ann_root)
 # The resulting dataset name is: biomed_BiomedParseData-Demo_demo
 
-# # Add your dataset here
-# datasets = ['YOUR_DATASET_NAME', ]   # provide name of the dataset under biomedparse_datasets
-# splits = ['train', 'test']    # provide split name, e.g., train, test, val
+# Add your dataset here
+datasets = ['/kaggle/input/biomed-data', ]   # provide name of the dataset under biomedparse_datasets
+splits = ['train', 'test']    # provide split name, e.g., train, test, val
 
-# # Here we register all the splits of the dataset
-# for name in datasets:
-#     for split in splits:
-#         dataname = f'biomed_{name.replace("/", "-")}_{split}'
-#         image_root = f"{name}/{split}"
-#         ann_root = f"{name}/{split}.json"
-#         _PREDEFINED_SPLITS_BIOMED[dataname] = (image_root, ann_root)
-# # The resulting dataset names are: biomed_YOUR_DATASET_NAME_train, biomed_YOUR_DATASET_NAME_test
+# Here we register all the splits of the dataset
+for name in datasets:
+    for split in splits:
+        dataname = f'biomed_{name.replace("/", "-")}_{split}'
+        image_root = f"{name}/{split}"
+        ann_root = f"{name}/{split}.json"
+        _PREDEFINED_SPLITS_BIOMED[dataname] = (image_root, ann_root)
+# The resulting dataset names are: biomed_YOUR_DATASET_NAME_train, biomed_YOUR_DATASET_NAME_test
 
 
 def get_metadata():
