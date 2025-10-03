@@ -72,8 +72,8 @@ def generate_description(lesion, site, mod):
 
     desc = lesion_descriptions_en[lesion]
     name = random.choice(desc['names'])
-    function = random.choice(desc['function'])
-    location = random.choice(desc['location'])
+    # function = random.choice(desc['function'])
+    # location = random.choice(desc['location'])
 
     # 随机选择生成 1 到 3 句描述
     num_sentences = random.randint(1, 1)
