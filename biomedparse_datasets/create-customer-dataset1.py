@@ -34,23 +34,23 @@ category_ids = {label_base[i]['name']: int(i) for i in label_base if 'name' in l
 lesion_descriptions_en = {
     'yuji': {
         'names': ['yuji', 'LU10'],
-        'function': ['highly effective in clearing heat from the lungs and throat', 'relieve sore throat', 'cough', 'asthma', 'fever'],
-        'location': ['base of the thumb', 'located on the palm side of the hand', 'midpoint of the first metacarpal bone', 'Lung Meridian']
+        # 'function': ['highly effective in clearing heat from the lungs and throat', 'relieve sore throat', 'cough', 'asthma', 'fever'],
+        # 'location': ['base of the thumb', 'located on the palm side of the hand', 'midpoint of the first metacarpal bone', 'Lung Meridian']
     },
     'laogong': {
         'names': ['laogong', 'P8'],
-        'function': ['clearing heat from the heart', 'calming the mind', 'revitalizing energy flow', 'stress', 'anxiety', 'insomnia', 'heart palpitations', 'excessive sweating', 'digestive discomfort'],
-        'location': ['located on the palm of the hand', 'Pericardium Meridian', 'where the tip of the middle finger naturally touches the palm','second and third metacarpal bones']
+        # 'function': ['clearing heat from the heart', 'calming the mind', 'revitalizing energy flow', 'stress', 'anxiety', 'insomnia', 'heart palpitations', 'excessive sweating', 'digestive discomfort'],
+        # 'location': ['located on the palm of the hand', 'Pericardium Meridian', 'where the tip of the middle finger naturally touches the palm','second and third metacarpal bones']
     },
     'zhongchong': {
         'names': ['zhongchong', 'P9'],
-        'function': ['clear heat', 'revive consciousness', 'regulate heart energy', 'stroke', 'fainting', 'high fever', 'heatstroke', 'loss of consciousness', 'heart palpitations'],
-        'location': ['tip of the middle finger', 'Pericardium Meridian']
+        # 'function': ['clear heat', 'revive consciousness', 'regulate heart energy', 'stroke', 'fainting', 'high fever', 'heatstroke', 'loss of consciousness', 'heart palpitations'],
+        # 'location': ['tip of the middle finger', 'Pericardium Meridian']
     },
     'shaofu': {
         'names': ['shaofu', 'HT8'],
-        'function': ['clearing heat from the Heart', 'calming mind', 'emotional stress', 'anxiety', 'heart palpitations', 'excessive sweating', 'mouth ulcers'],
-        'location': ['palm of the hand', 'Heart Meridian', 'lies where the tip of the little finger naturally touches the palm', 'fourth and fifth metacarpal bones']
+        # 'function': ['clearing heat from the Heart', 'calming mind', 'emotional stress', 'anxiety', 'heart palpitations', 'excessive sweating', 'mouth ulcers'],
+        # 'location': ['palm of the hand', 'Heart Meridian', 'lies where the tip of the little finger naturally touches the palm', 'fourth and fifth metacarpal bones']
     }
 }
 
@@ -79,9 +79,10 @@ def generate_description(lesion, site, mod):
     num_sentences = random.randint(1, 1)
     for _ in range(num_sentences):
         template = random.choice([
-        f"{name} is observed, used for {function}, located at {location}.",
-        f"{name} appears in the image, used for {function}, mainly distributed around {location}.",
-        f"{name} can be seen in the image, usually used for {function}, commonly found at {location}.",
+          f"{name}",
+        # f"{name} is observed, used for {function}, located at {location}.",
+        # f"{name} appears in the image, used for {function}, mainly distributed around {location}.",
+        # f"{name} can be seen in the image, usually used for {function}, commonly found at {location}.",
     ])
         description_list.append(template)
 
